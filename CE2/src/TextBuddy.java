@@ -13,7 +13,8 @@ public class TextBuddy {
 
 	static File file_object = null;
 	static final String MESSAGE_DELETE_ERROR = "Unable to delete";
-	
+	static final String MESSAGE_NOT_FOUND = " not found";
+
 	public static void main(String[] args) throws IOException {
 
 		Scanner sc = new Scanner(System.in);
@@ -50,10 +51,91 @@ public class TextBuddy {
 
 			} else if (command.equals("delete")) {
 				deleteTask(sc, fileName, record, extra);
+
+			} else if (command.equals("sort")) {
+				sortAlphabetically(record, extra);
+
+			} else if (command.equals("search")) {
+				searchContent(sc, record, extra);
+
 			}
 
 		} while (!command.equals("exit"));
 
+	}
+
+	private static void searchContent(Scanner sc, Stack<String> record,
+			Stack<String> extra) {
+		String search = sc.next();
+		while (!record.empty()) {
+			extra.push(record.pop());
+		}
+		int displayCounter = 1;
+		int searchCount = 0;
+		while (!extra.empty()) {
+			String contents = extra.pop();
+			int isFound = contents.indexOf(search);
+			if (isFound != -1) {
+				System.out.println(displayCounter + ". " + contents);
+				searchCount++;
+			}
+			record.push(contents);
+			displayCounter++;
+		}
+		if (searchCount == 0) {
+			System.out.println("'" + search + "'" + MESSAGE_NOT_FOUND);
+		}
+	}
+
+	private static void sortAlphabetically(Stack<String> record,
+			Stack<String> extra) {
+		for (int i = 0; i < record.size(); i++) {
+			while (!record.empty()) {
+				extra.push(record.pop());
+			}
+			String case1 = extra.pop();
+			String case2 = extra.pop();
+			String baseCase;
+
+			// Initial check
+			baseCase = initialSort(record, case1, case2);
+			// Remaining values
+			baseCase = remainingSort(record, extra, baseCase);
+			// Push final value
+			record.push(baseCase);
+
+		}
+
+		printFileContents(record, extra);
+	}
+
+	private static String initialSort(Stack<String> record, String case1,
+			String case2) {
+		String baseCase;
+		int weight = case1.compareTo(case2);
+		if (weight < 0) {
+			record.push(case1);
+			baseCase = case2;
+		} else {
+			record.push(case2);
+			baseCase = case1;
+		}
+		return baseCase;
+	}
+
+	private static String remainingSort(Stack<String> record,
+			Stack<String> extra, String baseCase) {
+		while (!extra.empty()) {
+			String case3 = extra.pop();
+			int weight = baseCase.compareTo(case3);
+			if (weight < 0) {
+				record.push(baseCase);
+				baseCase = case3;
+			} else {
+				record.push(case3);
+			}
+		}
+		return baseCase;
 	}
 
 	private static void deleteTask(Scanner sc, String fileName,
@@ -96,12 +178,16 @@ public class TextBuddy {
 
 	private static void displayContent(String fileName, Stack<String> record,
 			Stack<String> extra) {
-		
+
 		if (record.empty()) {
 			printEmptyFile(fileName);
 		} else {
 			printFileContents(record, extra);
 		}
+	}
+
+	private static void printEmptyFile(String fileName) {
+		System.out.println(fileName + " is empty");
 	}
 
 	private static void printFileContents(Stack<String> record,
@@ -117,11 +203,7 @@ public class TextBuddy {
 			record.push(display);
 			displayCounter++;
 		}
-		
-	}
 
-	private static void printEmptyFile(String fileName) {
-		System.out.println(fileName + " is empty");
 	}
 
 	private static String requestInput(Scanner sc) {
