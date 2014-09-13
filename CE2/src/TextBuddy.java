@@ -14,49 +14,46 @@ public class TextBuddy {
 	static File file_object = null;
 	static final String MESSAGE_DELETE_ERROR = "Unable to delete";
 	static final String MESSAGE_NOT_FOUND = " not found";
+	static Scanner sc = new Scanner(System.in);
+	static String fileName;
 
 	public static void main(String[] args) throws IOException {
-
-		Scanner sc = new Scanner(System.in);
-
-		String fileName;
 
 		Stack<String> record = new Stack<String>();
 		Stack<String> extra = new Stack<String>();
 
-		fileName = getFileName(args, sc);
-		createOrModifyFile(sc, fileName, record);
-		printWelcomeMsg(fileName);
-		commandInput(sc, fileName, record, extra);
+		fileName = getFileName(args);
+		createOrModifyFile(record);
+		printWelcomeMsg();
+		commandInput(record, extra);
 		saveData(record, file_object);
-		sc.close();
+
 	}
 
-	private static void commandInput(Scanner sc, String fileName,
-			Stack<String> record, Stack<String> extra)
+	private static void commandInput(Stack<String> record, Stack<String> extra)
 			throws FileNotFoundException {
 		String command;
 
 		do {
-			command = requestInput(sc);
+			command = requestInput();
 
 			if (command.equals("display")) {
-				displayContent(fileName, record, extra);
+				displayContent(record, extra);
 
 			} else if (command.equals("clear")) {
-				deleteAll(fileName, record);
+				deleteAll(record);
 
 			} else if (command.equals("add")) {
-				addTask(sc, fileName, record);
+				addTask(record);
 
 			} else if (command.equals("delete")) {
-				deleteTask(sc, fileName, record, extra);
+				deleteTask(record, extra);
 
 			} else if (command.equals("sort")) {
 				sortAlphabetically(record, extra);
 
 			} else if (command.equals("search")) {
-				searchContent(sc, record, extra);
+				searchContent(record, extra);
 
 			}
 
@@ -64,8 +61,7 @@ public class TextBuddy {
 
 	}
 
-	private static void searchContent(Scanner sc, Stack<String> record,
-			Stack<String> extra) {
+	private static void searchContent(Stack<String> record, Stack<String> extra) {
 		String search = sc.next();
 		while (!record.empty()) {
 			extra.push(record.pop());
@@ -138,8 +134,7 @@ public class TextBuddy {
 		return baseCase;
 	}
 
-	private static void deleteTask(Scanner sc, String fileName,
-			Stack<String> record, Stack<String> extra)
+	private static void deleteTask(Stack<String> record, Stack<String> extra)
 			throws FileNotFoundException {
 		int deleteNo = sc.nextInt();
 		if (record.empty() || record.size() < deleteNo) {
@@ -158,8 +153,8 @@ public class TextBuddy {
 		saveData(record, file_object);
 	}
 
-	private static void addTask(Scanner sc, String fileName,
-			Stack<String> record) throws FileNotFoundException {
+	private static void addTask(Stack<String> record)
+			throws FileNotFoundException {
 		String information = sc.nextLine();
 		record.push(information.trim());
 		System.out.println("added to " + fileName + ": \"" + information.trim()
@@ -167,7 +162,7 @@ public class TextBuddy {
 		saveData(record, file_object);
 	}
 
-	private static void deleteAll(String fileName, Stack<String> record)
+	private static void deleteAll(Stack<String> record)
 			throws FileNotFoundException {
 		while (!record.empty()) {
 			record.pop();
@@ -176,8 +171,7 @@ public class TextBuddy {
 		saveData(record, file_object);
 	}
 
-	private static void displayContent(String fileName, Stack<String> record,
-			Stack<String> extra) {
+	private static void displayContent(Stack<String> record, Stack<String> extra) {
 
 		if (record.empty()) {
 			printEmptyFile(fileName);
@@ -206,20 +200,20 @@ public class TextBuddy {
 
 	}
 
-	private static String requestInput(Scanner sc) {
+	private static String requestInput() {
 		String command;
 		System.out.print("command: ");
 		command = sc.next();
 		return command;
 	}
 
-	private static void printWelcomeMsg(String fileName) {
+	private static void printWelcomeMsg() {
 		System.out.println("Welcome to TextBuddy. " + fileName
 				+ " is ready for use");
 	}
 
-	private static void createOrModifyFile(Scanner sc, String fileName,
-			Stack<String> record) throws IOException {
+	private static void createOrModifyFile(Stack<String> record)
+			throws IOException {
 		if (!file_object.exists()) {
 			file_object.createNewFile();
 			System.out.print(fileName + " has been created \n");
@@ -244,7 +238,7 @@ public class TextBuddy {
 		}
 	}
 
-	private static String getFileName(String[] args, Scanner sc) {
+	private static String getFileName(String[] args) {
 		String fileName;
 		// If no arguments, get arguments, for regression testing
 		if (args.length < 1) {
