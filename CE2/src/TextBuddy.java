@@ -105,7 +105,7 @@ public class TextBuddy {
 		printFileContents(record, extra);
 	}
 
-	private static String initialSort(Stack<String> record, String case1,
+	public static String initialSort(Stack<String> record, String case1,
 			String case2) {
 		String baseCase;
 		int weight = case1.compareTo(case2);
@@ -238,7 +238,7 @@ public class TextBuddy {
 		}
 	}
 
-	private static String getFileName(String[] args) {
+	public static String getFileName(String[] args) {
 		String fileName;
 		// If no arguments, get arguments, for regression testing
 		if (args.length < 1) {
