@@ -1,5 +1,7 @@
-aaa
-abc
-acb
-acc
-adc
+b
+g
+d
+f
+e
+c
+a
